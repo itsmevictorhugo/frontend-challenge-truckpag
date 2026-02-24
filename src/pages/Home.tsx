@@ -17,6 +17,7 @@ export default function Home() {
     async function loadMovies() {
       try {
         setLoading(true);
+        setError(null);
         const data = await fetchMovies();
         setMovies(data);
       } catch (err: unknown) {

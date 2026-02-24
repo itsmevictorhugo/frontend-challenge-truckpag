@@ -57,7 +57,7 @@ export const useMoviesStore = create<MoviesState>()(
       movies: [],
       meta: {},
 
-      loading: false,
+      loading: true,
       error: null,
 
       filters: {
