@@ -160,18 +160,39 @@ export const useMoviesStore = create<MoviesState>()(
 
       getFilteredAndSortedMovies: () => {
         const state = useMoviesStore.getState();
-        const { movies, filters } = state;
-
-        let filtered = [...movies];
+        const { movies, meta, filters, sortField, sortOrder } = state;
+        let result = [...movies];
 
         if (filters.search.trim()) {
-          const search = filters.search.toLowerCase();
-          filtered = filtered.filter((movie) =>
-            movie.title.toLowerCase().includes(search),
-          );
+          const term = filters.search.toLowerCase();
+          result = result.filter((movie) => {
+            const titleMatch = movie.title.toLowerCase().includes(term);
+            if (filters.includeDescription) {
+              const descMatch = movie.description.toLowerCase.includes(term);
+              return titleMatch || descMatch;
+            }
+            return titleMatch;
+          });
         }
 
-        return filtered;
+        result.sort((a, b) => {
+          const getValue = (movie: Movie) => {
+            const m = meta[movie.id];
+            if (sortField === 'personalRating') {
+              return m?.personalRating ?? 0;
+            }
+            return Number(movie[sortField] ?? 0);
+          };
+
+          const valueA = getValue(a);
+          const valueB = getValue(b);
+
+          if (valueA < valueB) return sortOrder === 'asc' ? -1 : 1;
+          if (valueA > valueB) return sortOrder === 'asc' ? 1 : -1;
+
+          return 0;
+        });
+        return result;
       },
     }),
     {
