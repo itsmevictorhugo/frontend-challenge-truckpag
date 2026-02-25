@@ -1,5 +1,6 @@
 import type { Movie } from '../types/movie';
 import { useMoviesStore } from '../store/useMoviesStore';
+import { RatingStars } from './RatingStars';
 
 interface MovieCardProps {
   movie: Movie;
@@ -36,6 +37,8 @@ export function MovieCard({ movie }: MovieCardProps) {
       </ul>
 
       <div className="mt-2 font-semibold">⭐ Score: {movie.rt_score}</div>
+
+      <RatingStars movieId={movie.id} />
       <div className="flex gap-2 mt-3">
         <button
           onClick={() => toggleFavorite(movie.id)}
