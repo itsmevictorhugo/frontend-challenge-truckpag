@@ -12,6 +12,8 @@ export function MovieCard({ movie }: MovieCardProps) {
   const meta = useMoviesStore((state) => state.meta[movie.id]);
   const isFavorite = meta?.favorite ?? false;
   const isWatched = meta?.watched ?? false;
+  const setNotes = useMoviesStore((state) => state.setNotes);
+  const notes = meta?.notes ?? '';
 
   return (
     <article className="bg-white rounded-lg shadow p-4 hover:shadow-lg transition">
@@ -58,6 +60,12 @@ export function MovieCard({ movie }: MovieCardProps) {
           👁️ Assistido
         </button>
       </div>
+      <textarea
+        placeholder="Suas anotações..."
+        value={notes}
+        onChange={(e) => setNotes(movie.id, e.target.value)}
+        className="w-full mt-3 p-2 border rounded-md text-sm"
+      />
     </article>
   );
 }
