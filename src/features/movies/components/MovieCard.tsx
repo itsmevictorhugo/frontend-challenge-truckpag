@@ -1,10 +1,17 @@
 import type { Movie } from '../types/movie';
+import { useMoviesStore } from '../store/useMoviesStore';
 
 interface MovieCardProps {
   movie: Movie;
 }
 
 export function MovieCard({ movie }: MovieCardProps) {
+  const toggleFavorite = useMoviesStore((state) => state.toggleFavorite);
+  const toggleWatched = useMoviesStore((state) => state.toggleWatched);
+  const meta = useMoviesStore((state) => state.meta[movie.id]);
+  const isFavorite = meta?.favorite ?? false;
+  const isWatched = meta?.watched ?? false;
+
   return (
     <article className="bg-white rounded-lg shadow p-4 hover:shadow-lg transition">
       <img
@@ -22,11 +29,32 @@ export function MovieCard({ movie }: MovieCardProps) {
       <p className="text-sm mt-2 line-clamp-3">{movie.description}</p>
 
       <ul>
-        <li className="mt-3 text-xs text-gray-500">Director: {movie.director}</li>
+        <li className="mt-3 text-xs text-gray-500">
+          Director: {movie.director}
+        </li>
         <li className="text-xs text-gray-500">Producer: {movie.producer}</li>
       </ul>
 
       <div className="mt-2 font-semibold">⭐ Score: {movie.rt_score}</div>
+      <div className="flex gap-2 mt-3">
+        <button
+          onClick={() => toggleFavorite(movie.id)}
+          className={`px-3 py-1 rounded-md text-sm ${
+            isFavorite ? 'bg-yellow-400 text-black' : 'bg-gray-200'
+          }`}
+        >
+          ❤️ Favorito
+        </button>
+
+        <button
+          onClick={() => toggleWatched(movie.id)}
+          className={`px-3 py-1 rounded-md text-sm ${
+            isWatched ? 'bg-green-500 text-white' : 'bg-gray-200'
+          }`}
+        >
+          👁️ Assistido
+        </button>
+      </div>
     </article>
   );
 }
