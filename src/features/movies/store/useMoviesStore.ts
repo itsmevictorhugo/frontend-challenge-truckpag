@@ -13,8 +13,19 @@ interface MovieMeta {
   watched?: boolean;
   favorite?: boolean;
   notes?: string;
-  personalRating?: number;
+  personalRating?: number | null;
 }
+
+const defaultMeta: MovieMeta = {
+  watched: false,
+  favorite: false,
+  notes: '',
+  personalRading: null,
+};
+
+const getMeta = (state: MoviesState, id: string): MovieMeta => {
+  return state.meta[id] ?? defaultMeta;
+};
 
 interface Filters {
   search: string;
@@ -75,48 +86,61 @@ export const useMoviesStore = create<MoviesState>()(
       setError: (error) => set({ error }),
 
       toggleWatched: (id) =>
-        set((state) => ({
-          meta: {
-            ...state.meta,
-            [id]: {
-              ...state.meta[id],
-              watched: !state.meta[id]?.watched,
+        set((state) => {
+          const current = getMeta(state, id);
+
+          return {
+            meta: {
+              ...state.meta,
+              [id]: {
+                ...current,
+                watched: !current.watched,
+              },
             },
-          },
-        })),
+          };
+        }),
 
       toggleFavorite: (id) =>
-        set((state) => ({
-          meta: {
-            ...state.meta,
-            [id]: {
-              ...state.meta[id],
-              favorite: !state.meta[id]?.favorite,
+        set((state) => {
+          const current = getMeta(state, id);
+          return {
+            meta: {
+              ...state.meta,
+              [id]: {
+                ...current,
+                favorite: !current.favorite,
+              },
             },
-          },
-        })),
+          };
+        }),
 
       setNotes: (id, notes) =>
-        set((state) => ({
-          meta: {
-            ...state.meta,
-            [id]: {
-              ...state.meta[id],
-              notes,
+        set((state) => {
+          const current = getMeta(state, id);
+          return {
+            meta: {
+              ...state.meta,
+              [id]: {
+                ...current,
+                notes,
+              },
             },
-          },
-        })),
+          };
+        }),
 
       setPersonalRating: (id, rating) =>
-        set((state) => ({
-          meta: {
-            ...state.meta,
-            [id]: {
-              ...state.meta[id],
-              personalRating: rating,
+        set((state) => {
+          const current = getMeta(state, id);
+          return {
+            meta: {
+              ...state.meta,
+              [id]: {
+                ...current,
+                personalRating: rating,
+              },
             },
-          },
-        })),
+          };
+        }),
 
       setFilters: (filters) =>
         set((state) => ({
