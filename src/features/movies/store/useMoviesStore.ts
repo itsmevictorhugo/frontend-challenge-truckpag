@@ -55,7 +55,7 @@ interface MoviesState {
   toggleFavorite: (id: string) => void;
 
   setNotes: (id: string, notes: string) => void;
-  setPersonalRating: (id: string, rating: number) => void;
+  setPersonalRating: (id: string, rating: number | null) => void;
 
   setFilters: (filters: Partial<Filters>) => void;
 
@@ -133,12 +133,16 @@ export const useMoviesStore = create<MoviesState>()(
       setPersonalRating: (id, rating) =>
         set((state) => {
           const current = getMeta(state, id);
+
+          const normalized =
+            typeof rating === 'number' && rating > 0 ? rating : null;
+
           return {
             meta: {
               ...state.meta,
               [id]: {
                 ...current,
-                personalRating: rating,
+                personalRating: normalized,
               },
             },
           };
@@ -161,38 +165,77 @@ export const useMoviesStore = create<MoviesState>()(
       getFilteredAndSortedMovies: () => {
         const state = useMoviesStore.getState();
         const { movies, meta, filters, sortField, sortOrder } = state;
-        let result = [...movies];
+        let filtered = [...movies];
 
         if (filters.search.trim()) {
-          const term = filters.search.toLowerCase();
-          result = result.filter((movie) => {
-            const titleMatch = movie.title.toLowerCase().includes(term);
-            if (filters.includeDescription) {
-              const descMatch = movie.description.toLowerCase.includes(term);
-              return titleMatch || descMatch;
-            }
-            return titleMatch;
+          const search = filters.search.toLowerCase();
+
+          filtered = filtered.filter((movie) => {
+            const titleMatch = movie.title.toLowerCase().includes(search);
+            const descriptionMatch = filters.includeDescription
+              ? movie.description.toLowerCase().includes(search)
+              : false;
+            return titleMatch || descriptionMatch;
           });
         }
 
-        result.sort((a, b) => {
-          const getValue = (movie: Movie) => {
-            const m = meta[movie.id];
-            if (sortField === 'personalRating') {
-              return m?.personalRating ?? 0;
-            }
-            return Number(movie[sortField] ?? 0);
-          };
+        if (filters.favorite) {
+          filtered = filtered.filter(
+            (movie) => meta[movie.id]?.favorite === true,
+          );
+        }
 
-          const valueA = getValue(a);
-          const valueB = getValue(b);
+        if (filters.watched) {
+          filtered = filtered.filter(
+            (movie) => meta[movie.id]?.watched === true,
+          );
+        }
 
-          if (valueA < valueB) return sortOrder === 'asc' ? -1 : 1;
-          if (valueA > valueB) return sortOrder === 'asc' ? 1 : -1;
+        if (filters.hasNotes) {
+          filtered = filtered.filter((movie) => {
+            const notes = meta[movie.id]?.notes;
+            return notes && notes.trim().length > 0;
+          });
+        }
+
+        if (filters.stars !== undefined) {
+          filtered = filtered.filter((movie) => {
+            const rating = meta[movie.id]?.personalRating;
+            if (rating == null) return false;
+            return rating >= filters.stars!;
+          });
+        }
+
+        filtered.sort((a, b) => {
+          let aValue: number | string = '';
+          let bValue: number | string = '';
+
+          if (sortField === 'title') {
+            aValue = a.title;
+            bValue = b.title;
+          }
+
+          if (sortField === 'running_time') {
+            aValue = Number(a.running_time);
+            bValue = Number(b.running_time);
+          }
+
+          if (sortField === 'rt_score') {
+            aValue = Number(a.rt_score);
+            bValue = Number(b.rt_score);
+          }
+
+          if (sortField === 'personalRating') {
+            aValue = meta[a.id]?.personalRating ?? 0;
+            bValue = meta[b.id]?.personalRating ?? 0;
+          }
+
+          if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
+          if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
 
           return 0;
         });
-        return result;
+        return filtered;
       },
     }),
     {
