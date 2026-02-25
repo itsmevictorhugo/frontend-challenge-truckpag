@@ -159,8 +159,19 @@ export const useMoviesStore = create<MoviesState>()(
         })),
 
       getFilteredAndSortedMovies: () => {
-        const { movies } = useMoviesStore.getState();
-        return movies;
+        const state = useMoviesStore.getState();
+        const { movies, filters } = state;
+
+        let filtered = [...movies];
+
+        if (filters.search.trim()) {
+          const search = filters.search.toLowerCase();
+          filtered = filtered.filter((movie) =>
+            movie.title.toLowerCase().includes(search),
+          );
+        }
+
+        return filtered;
       },
     }),
     {
