@@ -20,7 +20,7 @@ const defaultMeta: MovieMeta = {
   watched: false,
   favorite: false,
   notes: '',
-  personalRading: null,
+  personalRating: null,
 };
 
 const getMeta = (state: MoviesState, id: string): MovieMeta => {
@@ -60,6 +60,8 @@ interface MoviesState {
   setFilters: (filters: Partial<Filters>) => void;
 
   setSort: (field: SortField) => void;
+
+  getFilteredAndSortedMovies: () => Movie[];
 }
 
 export const useMoviesStore = create<MoviesState>()(
@@ -155,6 +157,11 @@ export const useMoviesStore = create<MoviesState>()(
               ? 'desc'
               : 'asc',
         })),
+
+      getFilteredAndSortedMovies: () => {
+        const { movies } = useMoviesStore.getState();
+        return movies;
+      },
     }),
     {
       name: 'movies-storage',

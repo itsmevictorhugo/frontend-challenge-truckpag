@@ -5,7 +5,7 @@ import { MovieCardSkeleton } from '../features/movies/components/MovieCardSkelet
 import { useMoviesStore } from '../features/movies/store/useMoviesStore';
 
 export default function Home() {
-  const movies = useMoviesStore((state) => state.movies);
+  const movies = useMoviesStore((state) => state.getFilteredAndSortedMovies());
   const loading = useMoviesStore((state) => state.loading);
   const error = useMoviesStore((state) => state.error);
 
