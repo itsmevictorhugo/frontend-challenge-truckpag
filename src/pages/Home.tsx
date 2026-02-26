@@ -5,6 +5,7 @@ import { MovieCardSkeleton } from '../features/movies/components/MovieCardSkelet
 import { useMoviesStore } from '../features/movies/store/useMoviesStore';
 import { FiltersBar } from '../features/movies/components/FiltersBar';
 import { SortSelector } from '../features/movies/components/SortSelector';
+import { EmptyState } from '../features/movies/components/EmptyState';
 
 export default function Home() {
   const movies = useMoviesStore((state) => state.movies);
@@ -120,13 +121,15 @@ export default function Home() {
       <SortSelector />
 
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {loading
-          ? Array.from({ length: 8 }).map((_, i) => (
-              <MovieCardSkeleton key={i} />
-            ))
-          : filteredMovies.map((movie) => (
-              <MovieCard key={movie.id} movie={movie} />
-            ))}
+        {loading ? (
+          Array.from({ length: 8 }).map((_, i) => <MovieCardSkeleton key={i} />)
+        ) : filteredMovies.length === 0 ? (
+          <EmptyState />
+        ) : (
+          filteredMovies.map((movie) => (
+            <MovieCard key={movie.id} movie={movie} />
+          ))
+        )}
       </section>
     </div>
   );
