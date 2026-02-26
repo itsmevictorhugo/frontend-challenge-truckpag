@@ -59,9 +59,7 @@ interface MoviesState {
 
   setFilters: (filters: Partial<Filters>) => void;
 
-  setSort: (field: SortField) => void;
-
-  getFilteredAndSortedMovies: () => Movie[];
+  setSort: (field: SortField, order: SortOrder) => void;
 }
 
 export const useMoviesStore = create<MoviesState>()(
@@ -153,14 +151,11 @@ export const useMoviesStore = create<MoviesState>()(
           filters: { ...state.filters, ...filters },
         })),
 
-      setSort: (field) =>
-        set((state) => ({
+      setSort: (field, order) =>
+        set({
           sortField: field,
-          sortOrder:
-            state.sortField === field && state.sortOrder === 'asc'
-              ? 'desc'
-              : 'asc',
-        })),
+          sortOrder: order,
+        }),
 
       getFilteredAndSortedMovies: () => {
         const state = useMoviesStore.getState();

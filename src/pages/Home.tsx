@@ -4,6 +4,7 @@ import { MovieCard } from '../features/movies/components/MovieCard';
 import { MovieCardSkeleton } from '../features/movies/components/MovieCardSkeleton';
 import { useMoviesStore } from '../features/movies/store/useMoviesStore';
 import { FiltersBar } from '../features/movies/components/FiltersBar';
+import { SortSelector } from '../features/movies/components/SortSelector';
 
 export default function Home() {
   const movies = useMoviesStore((state) => state.movies);
@@ -116,6 +117,7 @@ export default function Home() {
       {error && <div className="mb-4 text-red-600 font-medium">{error}</div>}
 
       <FiltersBar />
+      <SortSelector />
 
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {loading
