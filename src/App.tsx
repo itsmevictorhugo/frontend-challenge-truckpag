@@ -1,7 +1,13 @@
 import Home from './pages/Home';
+import { Toaster } from 'sonner';
 
 function App() {
-  return <Home />;
+  return (
+    <>
+      <Toaster position="top-right" richColors />
+      <Home />
+    </>
+  );
 }
 
 export default App;

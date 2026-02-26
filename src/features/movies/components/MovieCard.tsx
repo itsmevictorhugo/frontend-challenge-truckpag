@@ -2,6 +2,7 @@ import type { Movie } from '../types/movie';
 import { useMoviesStore } from '../store/useMoviesStore';
 import { RatingStars } from './RatingStars';
 import { HighlightedText } from './HighlightedText';
+import { toast } from 'sonner';
 
 interface MovieCardProps {
   movie: Movie;
@@ -16,6 +17,23 @@ export function MovieCard({ movie }: MovieCardProps) {
   const setNotes = useMoviesStore((state) => state.setNotes);
   const notes = meta?.notes ?? '';
   const filters = useMoviesStore((state) => state.filters);
+
+  const handleToggleFavorite = () => {
+    const next = !isFavorite;
+    toggleFavorite(movie.id);
+
+    toast.success(next ? 'Adicionado aos favoritos' : 'Removido dos favoritos');
+  };
+
+  const handleToggleWatched = () => {
+    const nextValue = !isWatched;
+
+    toggleWatched(movie.id);
+
+    toast.success(
+      nextValue ? 'Marcado como assistido' : 'Marcado como não assistido',
+    );
+  };
 
   return (
     <article className="bg-white rounded-lg shadow p-4 hover:shadow-lg transition">
@@ -54,18 +72,22 @@ export function MovieCard({ movie }: MovieCardProps) {
       <RatingStars movieId={movie.id} />
       <div className="flex gap-2 mt-3">
         <button
-          onClick={() => toggleFavorite(movie.id)}
-          className={`px-3 py-1 rounded-md text-sm ${
-            isFavorite ? 'bg-yellow-400 text-black' : 'bg-gray-200'
+          onClick={handleToggleFavorite}
+          className={`px-3 py-1 rounded-md text-sm transition-colors duration-200 ${
+            isFavorite
+              ? 'bg-yellow-300 hover:bg-yellow-400 text-black'
+              : 'bg-gray-200 hover:bg-gray-300'
           }`}
         >
           ❤️ Favorito
         </button>
 
         <button
-          onClick={() => toggleWatched(movie.id)}
-          className={`px-3 py-1 rounded-md text-sm ${
-            isWatched ? 'bg-green-500 text-white' : 'bg-gray-200'
+          onClick={handleToggleWatched}
+          className={`px-3 py-1 rounded-md text-sm transition-colors duration-200 ${
+            isWatched
+              ? 'bg-green-500 hover:bg-green-600 text-white'
+              : 'bg-gray-200 hover:bg-gray-300'
           }`}
         >
           👁️ Assistido
