@@ -1,6 +1,7 @@
 import type { Movie } from '../types/movie';
 import { useMoviesStore } from '../store/useMoviesStore';
 import { RatingStars } from './RatingStars';
+import { HighlightedText } from './HighlightedText';
 
 interface MovieCardProps {
   movie: Movie;
@@ -14,6 +15,7 @@ export function MovieCard({ movie }: MovieCardProps) {
   const isWatched = meta?.watched ?? false;
   const setNotes = useMoviesStore((state) => state.setNotes);
   const notes = meta?.notes ?? '';
+  const filters = useMoviesStore((state) => state.filters);
 
   return (
     <article className="bg-white rounded-lg shadow p-4 hover:shadow-lg transition">
@@ -29,7 +31,16 @@ export function MovieCard({ movie }: MovieCardProps) {
         {movie.release_date} • {movie.running_time} min
       </p>
 
-      <p className="text-sm mt-2 line-clamp-3">{movie.description}</p>
+      <p className="text-sm mt-2 line-clamp-3">
+        {filters.includeDescription ? (
+          <HighlightedText
+            text={movie.description}
+            highlight={filters.search}
+          />
+        ) : (
+          movie.description
+        )}
+      </p>
 
       <ul>
         <li className="mt-3 text-xs text-gray-500">
