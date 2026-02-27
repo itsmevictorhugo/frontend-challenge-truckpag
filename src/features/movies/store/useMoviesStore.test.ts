@@ -41,4 +41,15 @@ describe('useMoviesStore - toggleFavorite', () => {
 
     expect(updatedMeta.favorite).toBe(false);
   });
+
+  it('should normalize personalRating to null if <= 0', () => {
+    const movieId = '1';
+    const { setPersonalRating } = useMoviesStore.getState();
+
+    setPersonalRating(movieId, 0);
+
+    const updatedMeta = useMoviesStore.getState().meta[movieId];
+
+    expect(updatedMeta.personalRating).toBe(null);
+  });
 });
