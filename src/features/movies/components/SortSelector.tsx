@@ -1,4 +1,8 @@
-import { useMoviesStore, type SortField, type SortOrder } from '../store/useMoviesStore';
+import {
+  useMoviesStore,
+  type SortField,
+  type SortOrder,
+} from '../store/useMoviesStore';
 
 export function SortSelector() {
   const sortField = useMoviesStore((state) => state.sortField);
@@ -6,7 +10,7 @@ export function SortSelector() {
   const setSort = useMoviesStore((state) => state.setSort);
 
   return (
-    <div className="bg-white rounded-lg shadow p-4 mb-4 flex flex-wrap gap-3 items-center">
+    <div className="bg-white rounded-lg shadow p-4 mb-4 flex flex-col sm:flex-row gap-3 sm:items-center">
       <span className="text-sm font-medium">Ordenar por:</span>
 
       <select
@@ -23,7 +27,7 @@ export function SortSelector() {
       <select
         value={sortOrder}
         onChange={(e) => setSort(sortField, e.target.value as SortOrder)}
-        className="border rounded px-2 py-1"
+        className="w-full sm:w-auto border rounded px-2 py-1"
       >
         <option value="asc">Ascendente</option>
         <option value="desc">Descendente</option>

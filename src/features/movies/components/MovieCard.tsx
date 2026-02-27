@@ -2,6 +2,7 @@ import type { Movie } from '../types/movie';
 import { useMoviesStore } from '../store/useMoviesStore';
 import { RatingStars } from './RatingStars';
 import { HighlightedText } from './HighlightedText';
+import { toast } from 'sonner';
 
 interface MovieCardProps {
   movie: Movie;
@@ -17,12 +18,29 @@ export function MovieCard({ movie }: MovieCardProps) {
   const notes = meta?.notes ?? '';
   const filters = useMoviesStore((state) => state.filters);
 
+  const handleToggleFavorite = () => {
+    const next = !isFavorite;
+    toggleFavorite(movie.id);
+
+    toast.success(next ? 'Adicionado aos favoritos' : 'Removido dos favoritos');
+  };
+
+  const handleToggleWatched = () => {
+    const nextValue = !isWatched;
+
+    toggleWatched(movie.id);
+
+    toast.success(
+      nextValue ? 'Marcado como assistido' : 'Marcado como não assistido',
+    );
+  };
+
   return (
-    <article className="bg-white rounded-lg shadow p-4 hover:shadow-lg transition">
+    <article className="bg-white rounded-xl shadow-md p-5 flex flex-col justify-between transition-shadow duration-200 hover:shadow-lg">
       <img
         src={movie.image}
         alt={`Poster do filme ${movie.title}`}
-        className="w-full h-64 object-cover rounded"
+        className="w-full h-64 object-cover rounded-md"
       />
 
       <h2 className="text-xl font-semibold mt-2">{movie.title}</h2>
@@ -52,20 +70,24 @@ export function MovieCard({ movie }: MovieCardProps) {
       <div className="mt-2 font-semibold">⭐ Score: {movie.rt_score}</div>
 
       <RatingStars movieId={movie.id} />
-      <div className="flex gap-2 mt-3">
+      <div className="flex flex-wrap gap-2 mt-3">
         <button
-          onClick={() => toggleFavorite(movie.id)}
-          className={`px-3 py-1 rounded-md text-sm ${
-            isFavorite ? 'bg-yellow-400 text-black' : 'bg-gray-200'
+          onClick={handleToggleFavorite}
+          className={`px-3 py-1 rounded-md text-sm font-medium transition duration-200 ${
+            isFavorite
+              ? 'bg-pink-400 text-white hover:bg-pink-500'
+              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
           }`}
         >
           ❤️ Favorito
         </button>
 
         <button
-          onClick={() => toggleWatched(movie.id)}
-          className={`px-3 py-1 rounded-md text-sm ${
-            isWatched ? 'bg-green-500 text-white' : 'bg-gray-200'
+          onClick={handleToggleWatched}
+          className={`px-3 py-1 rounded-md text-sm font-medium transition duration-200 ${
+            isWatched
+              ? 'bg-green-500 text-white hover:bg-green-600'
+              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
           }`}
         >
           👁️ Assistido
@@ -75,7 +97,7 @@ export function MovieCard({ movie }: MovieCardProps) {
         placeholder="Suas anotações..."
         value={notes}
         onChange={(e) => setNotes(movie.id, e.target.value)}
-        className="w-full mt-3 p-2 border rounded-md text-sm"
+        className="w-full border mt-3 p-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
       />
     </article>
   );

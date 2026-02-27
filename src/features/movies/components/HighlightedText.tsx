@@ -15,7 +15,7 @@ export function HighlightedText({ text, highlight }: HighlightedTextProps) {
     <>
       {parts.map((part, index) =>
         part.toLowerCase() === highlight.toLowerCase() ? (
-          <mark key={index} className="bg-yellow-200 px-1 rounded">
+          <mark key={index} className="bg-yellow-200 rounded">
             {part}
           </mark>
         ) : (
