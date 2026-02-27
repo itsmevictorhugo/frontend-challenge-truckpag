@@ -112,7 +112,7 @@ export default function Home() {
   }, [movies, meta, filters, sortField, sortOrder]);
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="max-w-7xl mx-auto px-4 py-6 min-h-screen bg-gray-100 ">
       <h1 className="text-3xl font-bold mb-6">Studio Ghibli Movies</h1>
 
       {error && <div className="mb-4 text-red-600 font-medium">{error}</div>}
